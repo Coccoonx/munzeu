@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "519903321823",
+    "firebase_url": "https://eec-munzeu.firebaseio.com",
+    "project_id": "eec-munzeu",
+    "storage_bucket": "eec-munzeu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:519903321823:android:6ac3e8f4a75a1472",
+        "android_client_info": {
+          "package_name": "com.lri.mobile.eecmunzeu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "519903321823-3v5rc4etret7k5uua9arqubmopndgflm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNQ_Vd9Mt9_hb17geKRipeklfzaFXMjlw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
