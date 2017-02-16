@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,14 +16,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.lri.mobile.eecmunzeu.R;
+import com.lri.mobile.eecmunzeu.core.backend.BackEndService;
+import com.lri.mobile.eecmunzeu.core.model.Parish;
 import com.lri.mobile.eecmunzeu.uis.adapters.MainItemAdapter;
 
-import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final String TAG = "MainActivity";
+    private BackEndService backEndService;
+    public static List<Parish> mParishes;
+    MainItemAdapter mainItemAdapter;
+    RecyclerView recyclerView;
+    ProgressBar progressBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +57,8 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -49,21 +68,51 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
-
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_main);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_main);
         RecyclerView.LayoutManager lm = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(lm);
         recyclerView.setHasFixedSize(true);
 
-        ArrayList<Integer> dataSet = new ArrayList<>();
-        for (int i=0; i<15; i++) {
-            dataSet.add(i);
-        }
-
-        MainItemAdapter mi = new MainItemAdapter(this, dataSet);
-        recyclerView.setAdapter(mi);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        backEndService = BackEndService.retrofit.create(BackEndService.class);
+
+//            if (tmpParish == 1L) {
+        Call<List<Parish>> callParish = backEndService.getAllParishes();
+        callParish.enqueue(new Callback<List<Parish>>() {
+            @Override
+            public void onResponse(Call<List<Parish>> call, Response<List<Parish>> response) {
+                if (response.body() != null) {
+                    mParishes = response.body();
+                    Log.d(TAG, "parishes = " + mParishes);
+                    progressBar.setVisibility(View.GONE);
+
+                    if (mParishes != null && !mParishes.isEmpty()) {
+                        mainItemAdapter = new MainItemAdapter(MainActivity.this, mParishes);
+                        recyclerView.setAdapter(mainItemAdapter);
+                        mainItemAdapter.notifyDataSetChanged();
+                    } else
+                        //// TODO: 02/02/2017 Handle internationalization and message display
+                        Toast.makeText(MainActivity.this, "Nothing to display", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, response.message() + "", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, response.message());
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Parish>> call, Throwable t) {
+                Log.d(TAG, Log.getStackTraceString(t));
+
+            }
+        });
+    }
+
 
     @Override
     public void onBackPressed() {

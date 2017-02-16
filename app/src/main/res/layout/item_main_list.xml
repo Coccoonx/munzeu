@@ -63,6 +63,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_small_short"
                     android:layout_marginStart="@dimen/margin_small_short"
+                    android:textSize="12sp"
                     android:text="Mifi"
                     android:textColor="@color/text_color_grey" />
 

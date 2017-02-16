@@ -82,6 +82,8 @@
                     android:textColor="@color/text_color_black"
                     android:textSize="@dimen/item_main_text_size" />
 
+
+
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
