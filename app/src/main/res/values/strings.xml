@@ -98,4 +98,9 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
+    <string name="permission_denied">Permission Refusée</string>
+    <string name="permission_necessary">Permission requise</string>
+    <string name="permission_explanation">Nous avons besoins d\'autorisations &lt;b>obligatoires&lt;/b> pour vous fournir une meilleure expérience. Veuillez autoriser les requêtes qui vont suivre.</string>
+    <string name="permission_not_all_allowed_explanation">Vous devez autoriser toutes les permissions</string>
+    <string name="title_activity_list">ListActivity</string>
 </resources>

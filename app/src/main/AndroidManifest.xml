@@ -32,7 +32,7 @@
         <activity
             android:name=".uis.BrowseActivity"
             android:label="@string/browse"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
@@ -41,9 +41,17 @@
         <activity
             android:name=".uis.DetailsActivity"
             android:label="@string/title_activity_details"
+            android:parentActivityName=".uis.ListActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.lri.mobile.eecmunzeu.uis.ListActivity" />
+        </activity>
+        <activity
+            android:name=".uis.ListActivity"
+            android:label="@string/title_activity_list"
             android:parentActivityName=".uis.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            >
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lri.mobile.eecmunzeu.uis.MainActivity" />

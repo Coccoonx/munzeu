@@ -1,21 +1,23 @@
 package com.lri.mobile.eecmunzeu.uis;
 
 import android.Manifest;
+import android.annotation.TargetApi;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -53,11 +55,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static com.lri.mobile.eecmunzeu.uis.MainActivity.mParishes;
 
@@ -65,6 +62,7 @@ public class BrowseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleMap.CancelableCallback {
 
     private static final String TAG = "BrowseActivity";
+    private static final int ALL_PERMISSIONS_REQUEST = 300;
     private GoogleMap mGoogleMap;
     MapView mapView;
     Location specLocation;
@@ -72,7 +70,7 @@ public class BrowseActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient;
     private Location l;
     private LatLng mCurrentLatLn;
-//    List<Parish> mParishes;
+    //    List<Parish> mParishes;
     ArrayList<LatLng> markerPoints;
 
     @Override
@@ -112,7 +110,11 @@ public class BrowseActivity extends AppCompatActivity
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         if (mapView != null) {
-            mapView.getMapAsync(this);
+            if (CoreUtils.checkAllPermissions(BrowseActivity.this)) {
+                mapView.getMapAsync(this);
+
+            } else
+                CoreUtils.alertAndRequestPermission(BrowseActivity.this);
         }
     }
 
@@ -123,6 +125,78 @@ public class BrowseActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.END);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case ALL_PERMISSIONS_REQUEST: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED
+//                        && grantResults[2] == PackageManager.PERMISSION_GRANTED
+                        /*&& grantResults[3] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[4] == PackageManager.PERMISSION_GRANTED*/) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    //use standard intent to capture an image
+
+//                    Intent intent = new Intent(LoginActivity.this, PhoneContactService.class);
+//                    startService(intent);
+
+//                    new ProfileManager.SaveProfile().execute(profile);
+
+                    mapView.getMapAsync(this);
+
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+                    alertBuilder.setCancelable(true);
+                    alertBuilder.setTitle(getResources().getString(R.string.permission_denied));
+                    alertBuilder.setMessage(getResources().getString(R.string.permission_not_all_allowed_explanation));
+                    alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                        public void onClick(DialogInterface dialog, int which) {
+//                            if (progressBar != null && submitButton != null && loginChoices != null) {
+//                                progressBar.setVisibility(View.GONE);
+//                                submitButton.setVisibility(View.VISIBLE);
+//                                loginChoices.setVisibility(View.VISIBLE);
+//                            }
+//                            finish();
+                        }
+                    });
+
+                    final AlertDialog alert = alertBuilder.create();
+
+
+//                    alert.setOnShowListener(new DialogInterface.OnShowListener() {
+//                        @Override
+//                        public void onShow(DialogInterface arg0) {
+//                            alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.colorPrimary));
+//                        }
+//                    });
+
+
+                    alert.show();
+                    alert.getButton(alert.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.colorPrimary));
+//                    dialog.getButton(dialog.BUTTON_POSITIVE).setTextColor(neededColor);
+
+                }
+//                Intent intent = new Intent(LoginActivity.this, PhoneContactService.class);
+//                startService(intent);
+//                startApp();
+                return;
+            }
+
+
+            // other 'case' lines to check for other
+            // permissions this app might request
         }
     }
 
@@ -163,9 +237,15 @@ public class BrowseActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.nav_share) {
+        }*/ else if (id == R.id.nav_share) {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT,
+                    "Hey check out EEC app at: http://www.leroidelinformatique.com");
+            sendIntent.setType("text/plain");
+            startActivity(sendIntent);
 
-        } else if (id == R.id.nav_send) {
+        }/* else if (id == R.id.nav_send) {
 
         }*/
 
@@ -191,6 +271,8 @@ public class BrowseActivity extends AppCompatActivity
 
         if (specLocation != null) {
             loadEECMarker(specLocation);
+        } else {
+            loadEECMarker(MainActivity.mParishes);
         }
 
 //            backEndService = BackEndService.retrofit.create(BackEndService.class);
@@ -222,7 +304,6 @@ public class BrowseActivity extends AppCompatActivity
 //
 //                }
 //            });
-
 
 
     }
@@ -273,6 +354,7 @@ public class BrowseActivity extends AppCompatActivity
         options.draggable(false);
         options.icon(BitmapDescriptorFactory.fromResource(R.drawable.eec_marker));
         mGoogleMap.addMarker(options);
+//        drawRoute();
     }
 
     private void loadEECMarker(List<Parish> parishes) {
@@ -280,13 +362,16 @@ public class BrowseActivity extends AppCompatActivity
         MarkerOptions options;
 
         for (Parish parish : parishes) {
-            options = new MarkerOptions();
-            options.position(new LatLng(parish.getLatitude(), parish.getLongitude()));
-            options.title(parish.getDisplayName());
-            options.snippet(parish.getPastorName());
-            options.draggable(false);
-            options.icon(BitmapDescriptorFactory.fromResource(R.drawable.eec_marker));
-            mGoogleMap.addMarker(options);
+            if (parish.getLatitude() != 0 && parish.getLongitude() != 0) {
+                options = new MarkerOptions();
+                options.position(new LatLng(parish.getLatitude(), parish.getLongitude()));
+                options.title(parish.getDisplayName());
+                options.snippet(parish.getPastorName());
+                options.draggable(false);
+                options.icon(BitmapDescriptorFactory.fromResource(R.drawable.eec_marker));
+                mGoogleMap.addMarker(options);
+            }
+
         }
         // Setting the position of the marker
 

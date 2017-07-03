@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/margin_small_short"
+    android:layout_marginBottom="@dimen/margin_small_short"
+    android:layout_marginEnd="@dimen/margin_small_short"
+    android:layout_marginLeft="@dimen/margin_small_short"
+    android:layout_marginRight="@dimen/margin_small_short"
+    android:layout_marginStart="@dimen/margin_small_short">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:focusable="true"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        card_view:cardUseCompatPadding="true"
+        card_view:cardCornerRadius="0dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:paddingLeft="@dimen/margin_small_short"
+            android:paddingRight="@dimen/margin_small_short"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/item_image"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/eecplateau" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@id/item_image"
+                android:layout_toRightOf="@id/item_image"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="@dimen/margin_small_short">
+
+                <TextView
+                    android:id="@+id/item_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_small_short"
+                    android:layout_marginStart="@dimen/margin_small_short"
+                    android:text="Paroisse de Tamdja"
+                    android:textColor="@color/text_color_black"
+                    android:textSize="@dimen/item_main_text_size"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/item_subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_small_short"
+                    android:layout_marginStart="@dimen/margin_small_short"
+                    android:textSize="12sp"
+                    android:text="Mifi"
+                    android:textColor="@color/text_color_grey" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/item_icon_pastor"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/ic_pastor"
+                        android:tint="@color/text_color_grey" />
+
+                    <TextView
+                        android:id="@+id/item_label_pastor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_small_short"
+                        android:layout_marginStart="@dimen/margin_small_short"
+                        android:text="TCHOKOTE Tertulirn"
+                        android:textColor="@color/text_color_black"
+                        android:textSize="@dimen/item_main_text_size_mini" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    android:layout_marginTop="0dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/item_icon_people"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/ic_home"
+                        android:tint="@color/text_color_grey" />
+
+                    <TextView
+                        android:id="@+id/item_label_people"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_small_short"
+                        android:layout_marginStart="@dimen/margin_small_short"
+                        android:text="33 Paroisses"
+                        android:textColor="@color/text_color_black"
+                        android:textSize="@dimen/item_main_text_size_mini" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>

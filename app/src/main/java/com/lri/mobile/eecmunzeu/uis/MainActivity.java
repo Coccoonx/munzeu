@@ -1,9 +1,8 @@
 package com.lri.mobile.eecmunzeu.uis;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,26 +16,33 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.lri.mobile.eecmunzeu.R;
-import com.lri.mobile.eecmunzeu.core.backend.BackEndService;
 import com.lri.mobile.eecmunzeu.core.model.Parish;
+import com.lri.mobile.eecmunzeu.uis.adapters.ListItemAdapter;
 import com.lri.mobile.eecmunzeu.uis.adapters.MainItemAdapter;
+import com.lri.mobile.eecmunzeu.utils.CoreUtils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MainActivity";
-    private BackEndService backEndService;
+    //    private BackEndService backEndService;
     public static List<Parish> mParishes;
-    MainItemAdapter mainItemAdapter;
+    MainItemAdapter listItemAdapter;
     RecyclerView recyclerView;
     ProgressBar progressBar;
 
@@ -47,15 +53,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
@@ -73,13 +70,18 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setLayoutManager(lm);
         recyclerView.setHasFixedSize(true);
 
+        new DownloadFilesTask().execute();
+
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        backEndService = BackEndService.retrofit.create(BackEndService.class);
+
+
+        /*backEndService = BackEndService.retrofit.create(BackEndService.class);
 
 //            if (tmpParish == 1L) {
         Call<List<Parish>> callParish = backEndService.getAllParishes();
@@ -92,9 +94,9 @@ public class MainActivity extends AppCompatActivity
                     progressBar.setVisibility(View.GONE);
 
                     if (mParishes != null && !mParishes.isEmpty()) {
-                        mainItemAdapter = new MainItemAdapter(MainActivity.this, mParishes);
-                        recyclerView.setAdapter(mainItemAdapter);
-                        mainItemAdapter.notifyDataSetChanged();
+                        listItemAdapter = new ListItemAdapter(MainActivity.this, mParishes);
+                        recyclerView.setAdapter(listItemAdapter);
+                        listItemAdapter.notifyDataSetChanged();
                     } else
                         //// TODO: 02/02/2017 Handle internationalization and message display
                         Toast.makeText(MainActivity.this, "Nothing to display", Toast.LENGTH_SHORT).show();
@@ -110,7 +112,7 @@ public class MainActivity extends AppCompatActivity
                 Log.d(TAG, Log.getStackTraceString(t));
 
             }
-        });
+        });*/
     }
 
 
@@ -158,19 +160,62 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, BrowseActivity.class));
             finish();
 
-        } else if (id == R.id.nav_send) {
-            startActivity(new Intent(MainActivity.this, DetailsActivity.class));
+        } /*else if (id == R.id.nav_send) {
+//            startActivity(new Intent(MainActivity.this, DetailsActivity.class));
             //finish();
-        } /*else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.nav_share) {
+        }*/ else if (id == R.id.nav_share) {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT,
+                    "Hey check out EEC app at: http://www.leroidelinformatique.com");
+            sendIntent.setType("text/plain");
+            startActivity(sendIntent);
 
-        } else if (id == R.id.nav_send) {
-
-        }*/
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private class DownloadFilesTask extends AsyncTask<Void, Void, List<Parish>> {
+
+        @Override
+        protected void onPostExecute(List<Parish> parishes) {
+            super.onPostExecute(parishes);
+            List<Parish> myRegion = new ArrayList<>();
+
+            if (parishes != null) {
+                mParishes = parishes;
+
+                String key = "";
+                for (Parish parish : mParishes) {
+                    if (!parish.getRegion().equalsIgnoreCase(key)) {
+                        key = parish.getRegion();
+                        myRegion.add(parish);
+                    }
+                }
+
+                for (Parish region : myRegion) {
+                    for (Parish parish : mParishes) {
+                        if (region.getRegion().equals(parish.getRegion()))
+                            region.setNumberOfDevoted(region.getNumberOfDevoted() + 1);
+                    }
+                }
+//                Log.d("Region", Arrays.toString(myRegion.toArray()));
+                progressBar.setVisibility(View.GONE);
+                listItemAdapter = new MainItemAdapter(MainActivity.this, myRegion);
+                recyclerView.setAdapter(listItemAdapter);
+            }
+        }
+
+        @Override
+        protected List<Parish> doInBackground(Void... voids) {
+            return CoreUtils.processData(MainActivity.this);
+        }
+    }
+
+
 }

@@ -7,14 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 import com.lri.mobile.eecmunzeu.R;
 import com.lri.mobile.eecmunzeu.core.model.Parish;
 import com.lri.mobile.eecmunzeu.uis.DetailsActivity;
+import com.lri.mobile.eecmunzeu.uis.ListActivity;
 import com.lri.mobile.eecmunzeu.uis.viewholders.MainItemViewHolder;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,17 +34,18 @@ public class MainItemAdapter extends RecyclerView.Adapter<MainItemViewHolder> {
     @Override
     public void onBindViewHolder(MainItemViewHolder holder, int position) {
         final Parish parish = mDataSet.get(position);
-        holder.title.setText(parish.getDisplayName());
-        holder.subtitle.setText(parish.getDistrict());
+        holder.title.setText(parish.getRegion());
+
+        holder.subtitle.setText("");
         holder.pastorName.setText(parish.getPastorName());
-        holder.people.setText("" + parish.getNumberOfDevoted());
-        Picasso.with(mContext).load(parish.getPictureUrls().get(0)).into(holder.picture);
+        holder.people.setText("" + parish.getNumberOfDevoted()+" Paroisses");
+        Picasso.with(mContext).load(parish.getPictureUrls().get(0)).placeholder(R.drawable.logo_eec).into(holder.picture);
 
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, DetailsActivity.class);
-                intent.putExtra("parish", parish);
+                Intent intent = new Intent(mContext, ListActivity.class);
+                intent.putExtra("region", parish);
                 mContext.startActivity(intent);
             }
         });
@@ -61,7 +61,7 @@ public class MainItemAdapter extends RecyclerView.Adapter<MainItemViewHolder> {
     public MainItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         // create a new view
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_main_list, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_list, parent, false);
         // set the view's size, margins, paddings and layout parameters
         MainItemViewHolder vh = new MainItemViewHolder(v);
         return vh;

@@ -15,10 +15,7 @@ import android.widget.ImageView;
 import com.lri.mobile.eecmunzeu.R;
 import com.lri.mobile.eecmunzeu.core.model.Parish;
 import com.lri.mobile.eecmunzeu.uis.adapters.DetailsItemAdapter;
-import com.lri.mobile.eecmunzeu.uis.adapters.MainItemAdapter;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -43,7 +40,7 @@ public class DetailsActivity extends AppCompatActivity {
                             public void onClick(View v) {
                                 // Handle user action
                                 Intent intent = new Intent(DetailsActivity.this, BrowseActivity.class);
-                                if (parishLocation!=null)
+                                if (parishLocation != null)
                                     intent.putExtra("location", parishLocation);
                                 startActivity(intent);
                             }
@@ -69,9 +66,11 @@ public class DetailsActivity extends AppCompatActivity {
                     .placeholder(R.color.colorPrimary)
                     .into(toolbarImage);
 
-            parishLocation = new Location(parish.getDisplayName());
-            parishLocation.setLatitude(parish.getLatitude());
-            parishLocation.setLongitude(parish.getLongitude());
+            if (parish.getLatitude() != 0 && parish.getLongitude() != 0) {
+                parishLocation = new Location(parish.getDisplayName());
+                parishLocation.setLatitude(parish.getLatitude());
+                parishLocation.setLongitude(parish.getLongitude());
+            }
 
             DetailsItemAdapter mi = new DetailsItemAdapter(this, parish);
             recyclerView.setAdapter(mi);
